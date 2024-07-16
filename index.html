@@ -15,6 +15,7 @@
     <title>Bankist</title>
   </head>
   <body>
+    <!-- Nav and login form -->
     <nav>
       <p class="welcome">Log in to get started</p>
       <img src="/logo.png" alt="Bankist Logo" class="logo" />
@@ -29,10 +30,97 @@
           type="password"
           id="pin"
           class="login__input login--pin"
-          placeholder="Pin"
+          placeholder="PIN"
         />
         <button class="login__btn">&rarr;</button>
       </form>
     </nav>
+<!-- Account details -->
+    <main class="app">
+      <div class="balance">
+        <div>
+          <p class="balance--label">Current Balance</p>
+          <p class="balance--date">As of <span class="date">16/07/2024</span>, <span class="balance--time">22:20</span></p>
+        </div>
+          <p class="balance--value">0000€</p>
+      </div>
+
+      <div class="movements">
+        <div class="movement--row ">
+          <div class="movement-type deposit">1 deposit</div>
+            <div class="movement--details">
+            <div class="movement-value">0000€</div>
+          <div class="movement-date"><span>IN :</span> 16/07/2024</div>
+          </div>
+        </div>
+        <div class="movement--row ">
+          <div class="movement-type withdrawal">2 withdrawal</div>
+          
+          <div class="movement--details">
+            <div class="movement-value">0000€</div>
+          <div class="movement-date"><span>IN :</span> 16/07/2024</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="operation transfer-money">
+        <p class="op-title">Transfer money</p>
+        <form action="" class="form">
+              <input
+          type="text"
+          id="user"
+          class="op-input transfer-to"
+        />
+        <input
+          type="text"
+          id="pin"
+          class="op-input transfer-value"
+        />
+        <button class="op-btn trans-btn">&rarr;</button>
+        <label for="" class="form-label">Transfer to</label>
+        <label for="" class="form-label">Amount</label>
+        </form>
+      </div>
+
+
+      <div class="operation  request-loan">
+      <p class="op-title">Request loan</p>
+      <form action="" class="form loan-form">
+            <input
+        type="text"
+        class="op-input loan--amount"
+      />
+      <button class="op-btn request-btn">&rarr;</button>
+      <label for="" class="form-label form-loan-label">Amount</label>
+      </form>
+      </div>
+
+
+      <div class="operation  close-account">
+           <p class="op-title">Close account</p>
+        <form action="" class="form">
+              <input
+          type="text"
+          class="op-input close-user"
+        />
+        <input
+          type="password"
+          class="op-input close-pin"
+        />
+        <button class="op-btn close-btn">&rarr;</button>
+        <label for="" class="form-label">Confirm user</label>
+        <label for="" class="form-label">Confirm PIN</label>
+        </form>
+      </div>
+
+      <div class="summary">
+        <p class="summary--label">In <span class="summary--value summary--value--in">0000€</span></p>
+        <p class="summary--label">Out <span class="summary--value summary--value--out">0000€</span></p>
+        <p class="summary--label">Interest <span class="summary--value summary--value--interest">0000€</span></p>
+        <button class="btn--sort">&downarrow; SORT</button>
+      </div>
+
+    </main>
   </body>
 </html>
