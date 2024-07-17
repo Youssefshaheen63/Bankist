@@ -80,6 +80,8 @@ nav {
     grid-template-rows: auto repeat(3, 15rem);
     column-gap: 40px;
     row-gap: 16px;
+    /* opacity: 0; */
+    transition: all 1s;
 }
 
 .balance{
@@ -105,13 +107,35 @@ nav {
 
 .movements{
   background-color: #fff;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  overflow: scroll;
   border-radius: 15px;
-  grid-row: 2 / 3 span;
+  grid-row: 2 /  span 3;
 }
 
+.movements::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 14px;
+}
 
+.movements::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track  {
+  background: #fff;
+  border-radius: 3px;
+}
+
+.movements::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .movements,
+  body {
+      scrollbar-color: #ccc
+                     #fff;
+  }
+}
 .movement--row{
   padding: 10px 35px;
   border-bottom: 1px solid #eee;
