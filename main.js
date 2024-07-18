@@ -34,9 +34,20 @@ const accounts = [account1, account2, account3, account4];
 // Elements
 
 const movementsContainer = document.querySelector('.movements');
+const labelBalance = document.querySelector('.balance--value');
+const incomes = document.querySelector('.summary--value--in');
+const outs = document.querySelector('.summary--value--out');
+const interests = document.querySelector('.summary--value--interest');
+const appContainer = document.querySelector('.app');
+const labelWelcome = document.querySelector('.welcome');
+
+const loginBtn = document.querySelector('.login__btn');
+const loginUser = document.querySelector('.login--user');
+const loginPin = document.querySelector('.login--pin');
 
 // Display Movements
 const displayMovements = function (movements) {
+  movementsContainer.innerHTML = '';
   movements.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `<div class="movement--row ">
@@ -52,4 +63,71 @@ const displayMovements = function (movements) {
   });
 };
 
-displayMovements(account1.movements);
+// Calculate Balance
+const calcBalance = function (movements) {
+  const balance = movements.reduce((acc, cur) => acc + cur, 0);
+
+  labelBalance.textContent = `${balance}€`;
+};
+
+const displaySummry = function (account) {
+  const movement = account.movements;
+  const incomeing = movement
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  incomes.textContent = ` ${incomeing}€`;
+
+  const out = movement
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  outs.textContent = ` ${Math.abs(out)}€`;
+
+  const interest = movement
+    .filter(mov => mov > 0)
+    .map(deposit => (deposit * account.interestRate) / 100)
+    .filter(int => int >= 1)
+    .reduce((acc, int) => acc + int, 0);
+  interests.textContent = `${interest}€`;
+};
+
+// Compute UserName
+const computingUserName = function (accs) {
+  accs.forEach(function (acc) {
+    acc.userName = acc.owner
+      .toLocaleLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+
+computingUserName(accounts);
+
+// Login
+let currentUser;
+loginBtn.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  currentUser = accounts.find(acc => acc.userName === loginUser.value);
+
+  console.log(currentUser);
+  if (currentUser?.pin === Number(loginPin.value)) {
+    //  Display UI
+    labelWelcome.textContent = `Welcome ${currentUser.owner.split(' ')[0]}`;
+    appContainer.style.opacity = 1;
+
+    // Clear input Fields
+    loginUser.value = loginPin.value = '';
+
+    // BLur Method Make Field loses Fovus
+    loginPin.blur();
+    // Display movements
+    displayMovements(currentUser.movements);
+
+    // Display Balance
+    calcBalance(currentUser.movements);
+
+    // Display summry
+    displaySummry(currentUser);
+  }
+});
