@@ -44,6 +44,9 @@ const labelWelcome = document.querySelector('.welcome');
 const loginBtn = document.querySelector('.login__btn');
 const loginUser = document.querySelector('.login--user');
 const loginPin = document.querySelector('.login--pin');
+const transferTo = document.querySelector('.transfer-to');
+const transferValue = document.querySelector('.transfer-value');
+const transferBtn = document.querySelector('.trans-btn');
 
 // Display Movements
 const displayMovements = function (movements) {
@@ -64,9 +67,9 @@ const displayMovements = function (movements) {
 };
 
 // Calculate Balance
-const calcBalance = function (movements) {
-  const balance = movements.reduce((acc, cur) => acc + cur, 0);
-
+const calcBalance = function (acc) {
+  const balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
+  acc.balance = balance;
   labelBalance.textContent = `${balance}€`;
 };
 
@@ -103,6 +106,16 @@ const computingUserName = function (accs) {
 
 computingUserName(accounts);
 
+const updateUI = function (acc) {
+  // Display movements
+  displayMovements(acc.movements);
+
+  // Display Balance
+  calcBalance(acc);
+
+  // Display summry
+  displaySummry(acc);
+};
 // Login
 let currentUser;
 loginBtn.addEventListener('click', function (e) {
@@ -110,7 +123,6 @@ loginBtn.addEventListener('click', function (e) {
 
   currentUser = accounts.find(acc => acc.userName === loginUser.value);
 
-  console.log(currentUser);
   if (currentUser?.pin === Number(loginPin.value)) {
     //  Display UI
     labelWelcome.textContent = `Welcome ${currentUser.owner.split(' ')[0]}`;
@@ -121,13 +133,31 @@ loginBtn.addEventListener('click', function (e) {
 
     // BLur Method Make Field loses Fovus
     loginPin.blur();
-    // Display movements
-    displayMovements(currentUser.movements);
 
-    // Display Balance
-    calcBalance(currentUser.movements);
-
-    // Display summry
-    displaySummry(currentUser);
+    updateUI(currentUser);
   }
+});
+
+// Transfer Operation
+
+transferBtn.addEventListener('click', function (e) {
+  e.preventDefault();
+  const transferAmount = Number(transferValue.value);
+  const receiverAccount = accounts.find(
+    acc => acc.userName === transferTo.value
+  );
+
+  if (
+    transferAmount <= currentUser.balance &&
+    transferAmount > 0 &&
+    receiverAccount &&
+    currentUser.userName !== receiverAccount.userName
+  ) {
+    currentUser.movements.push(-transferAmount);
+    receiverAccount.movements.push(transferAmount);
+    updateUI(currentUser);
+  }
+  // Clear input Fields
+  transferValue.value = transferTo.value = '';
+  transferValue.blur();
 });
