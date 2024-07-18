@@ -41,12 +41,17 @@ const interests = document.querySelector('.summary--value--interest');
 const appContainer = document.querySelector('.app');
 const labelWelcome = document.querySelector('.welcome');
 
+
+const closeBtn = document.querySelector('.close-btn');
 const loginBtn = document.querySelector('.login__btn');
+const transferBtn = document.querySelector('.trans-btn');
+
 const loginUser = document.querySelector('.login--user');
 const loginPin = document.querySelector('.login--pin');
 const transferTo = document.querySelector('.transfer-to');
 const transferValue = document.querySelector('.transfer-value');
-const transferBtn = document.querySelector('.trans-btn');
+const closeUser = document.querySelector('.close-user');
+const pinUser = document.querySelector('.close-pin');
 
 // Display Movements
 const displayMovements = function (movements) {
@@ -116,6 +121,9 @@ const updateUI = function (acc) {
   // Display summry
   displaySummry(acc);
 };
+
+// Event Handlers
+
 // Login
 let currentUser;
 loginBtn.addEventListener('click', function (e) {
@@ -160,4 +168,22 @@ transferBtn.addEventListener('click', function (e) {
   // Clear input Fields
   transferValue.value = transferTo.value = '';
   transferValue.blur();
+});
+
+closeBtn.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const userConfirm = closeUser.value;
+  const pinConfirm = Number(pinUser.value);
+  if (userConfirm === currentUser.userName && pinConfirm === currentUser.pin) {
+    const index = accounts.findIndex(acc => acc.userName === userConfirm);
+
+    accounts.splice(index, 1);
+    // Hide UI
+    appContainer.style.opacity = 0;
+    labelWelcome.textContent = `Log in to get started`;
+  }
+  // Clear input Fields
+  closeUser.value = pinUser.value = '';
+  pinUser.blur();
 });
