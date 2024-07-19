@@ -46,6 +46,7 @@ const closeBtn = document.querySelector('.close-btn');
 const loginBtn = document.querySelector('.login__btn');
 const transferBtn = document.querySelector('.trans-btn');
 const requestBtn = document.querySelector('.request-btn');
+const sortBtn = document.querySelector('.btn--sort');
 
 const loginUser = document.querySelector('.login--user');
 const loginPin = document.querySelector('.login--pin');
@@ -56,9 +57,11 @@ const pinUser = document.querySelector('.close-pin');
 const loanAmount = document.querySelector('.loan--amount');
 
 // Display Movements
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   movementsContainer.innerHTML = '';
-  movements.forEach(function (mov, i) {
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  movs.forEach(function (mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `<div class="movement--row ">
                     <div class="movement-type ${type}">${i + 1} ${type}</div>
@@ -202,4 +205,11 @@ closeBtn.addEventListener('click', function (e) {
   // Clear input Fields
   closeUser.value = pinUser.value = '';
   pinUser.blur();
+});
+
+let sort = !true;
+sortBtn.addEventListener('click', function (e) {
+  e.preventDefault();
+  sort = sort ? false : true;
+  displayMovements(currentUser.movements, sort);
 });
