@@ -45,6 +45,7 @@ const labelWelcome = document.querySelector('.welcome');
 const closeBtn = document.querySelector('.close-btn');
 const loginBtn = document.querySelector('.login__btn');
 const transferBtn = document.querySelector('.trans-btn');
+const requestBtn = document.querySelector('.request-btn');
 
 const loginUser = document.querySelector('.login--user');
 const loginPin = document.querySelector('.login--pin');
@@ -52,6 +53,7 @@ const transferTo = document.querySelector('.transfer-to');
 const transferValue = document.querySelector('.transfer-value');
 const closeUser = document.querySelector('.close-user');
 const pinUser = document.querySelector('.close-pin');
+const loanAmount = document.querySelector('.loan--amount');
 
 // Display Movements
 const displayMovements = function (movements) {
@@ -144,6 +146,20 @@ loginBtn.addEventListener('click', function (e) {
 
     updateUI(currentUser);
   }
+});
+
+// Request Loan
+requestBtn.addEventListener('click', function (e) {
+  e.preventDefault();
+  const amount = Number(loanAmount.value);
+
+  if (amount > 0 && currentUser.movements.some(mov => mov >= amount * 0.1)) {
+    currentUser.movements.push(amount);
+    updateUI(currentUser);
+  }
+  // Clear input Fields
+  loanAmount.value = '';
+  loanAmount.blur();
 });
 
 // Transfer Operation
