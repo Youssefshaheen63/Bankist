@@ -271,3 +271,12 @@ body::-webkit-scrollbar-thumb {
     background-color: #ccc; 
     color: #fff;
 }
+
+.Timer{
+    margin-top: 10px;
+}
+
+.logout{
+    font-size: 12px;
+    font-weight: 500;
+}

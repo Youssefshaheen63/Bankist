@@ -91,6 +91,7 @@ const appContainer = document.querySelector('.app');
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
 const labelTime = document.querySelector('.balance--time');
+const labelTimer = document.querySelector('.timer');
 
 const closeBtn = document.querySelector('.close-btn');
 const loginBtn = document.querySelector('.login__btn');
@@ -136,7 +137,6 @@ const formatDays = function (date, locale) {
   }
 };
 
-
 const formatedCur = function (value, locale, currency) {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
@@ -155,12 +155,12 @@ const displayMovements = function (acc, sort = false) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const formatedMov = formatedCur(mov, acc.locale, acc.currency);
     const html = `<div class="movement--row ">
-                    <div class="movement-type ${type}">${i + 1} ${type}</div>
-                      <div class="movement--details">
-                        <div class="movement-value">${formatedMov}</div>
-                        <div class="movement-date"><span>IN :</span> ${displayDate}</div>
-                      </div>
-                  </div>`;
+                      <div class="movement-type ${type}">${i + 1} ${type}</div>
+                        <div class="movement--details">
+                          <div class="movement-value">${formatedMov}</div>
+                          <div class="movement-date"><span>IN :</span> ${displayDate}</div>
+                        </div>
+                    </div>`;
 
     // console.log(html);
     movementsContainer.insertAdjacentHTML('afterbegin', html);
@@ -227,10 +227,29 @@ const updateUI = function (acc) {
   displaySummry(acc);
 };
 
+const startLogOutTimer = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      appContainer.style.opacity = 0;
+      labelWelcome.textContent = `Log in to get started`;
+    }
+    time--;
+  };
+  let time = 300;
+  tick();
+  const timer = setInterval(tick, 1000);
+
+  return timer;
+};
 // Event Handlers
 
 // Login
-let currentUser;
+let currentUser, timer;
 loginBtn.addEventListener('click', function (e) {
   e.preventDefault();
 
@@ -265,6 +284,9 @@ loginBtn.addEventListener('click', function (e) {
     // BLur Method Make Field loses Fovus
     loginPin.blur();
 
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
+
     updateUI(currentUser);
   }
 });
@@ -275,9 +297,14 @@ requestBtn.addEventListener('click', function (e) {
   const amount = Math.floor(loanAmount.value);
 
   if (amount > 0 && currentUser.movements.some(mov => mov >= amount * 0.1)) {
-    currentUser.movements.push(amount);
-    currentUser.movementsDates.push(new Date().toISOString());
-    updateUI(currentUser);
+    setTimeout(function () {
+      currentUser.movements.push(amount);
+      currentUser.movementsDates.push(new Date().toISOString());
+      updateUI(currentUser);
+
+      clearInterval(timer);
+      timer = startLogOutTimer();
+    }, 3000);
   }
   // Clear input Fields
   loanAmount.value = '';
@@ -305,6 +332,9 @@ transferBtn.addEventListener('click', function (e) {
     receiverAccount.movementsDates.push(new Date().toISOString());
 
     updateUI(currentUser);
+
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
   // Clear input Fields
   transferValue.value = transferTo.value = '';
@@ -335,5 +365,3 @@ sortBtn.addEventListener('click', function (e) {
   sort = sort ? false : true;
   displayMovements(currentUser, sort);
 });
-
-
