@@ -135,6 +135,14 @@ const formatDays = function (date, locale) {
     return new Intl.DateTimeFormat(locale, options).format(date);
   }
 };
+
+
+const formatedCur = function (value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
 // Display Movements
 const displayMovements = function (acc, sort = false) {
   movementsContainer.innerHTML = '';
@@ -145,10 +153,11 @@ const displayMovements = function (acc, sort = false) {
     const date = new Date(acc.movementsDates[i]);
     const displayDate = formatDays(date, acc.locale);
     const type = mov > 0 ? 'deposit' : 'withdrawal';
+    const formatedMov = formatedCur(mov, acc.locale, acc.currency);
     const html = `<div class="movement--row ">
                     <div class="movement-type ${type}">${i + 1} ${type}</div>
                       <div class="movement--details">
-                        <div class="movement-value">${mov.toFixed(2)}€</div>
+                        <div class="movement-value">${formatedMov}</div>
                         <div class="movement-date"><span>IN :</span> ${displayDate}</div>
                       </div>
                   </div>`;
@@ -162,7 +171,8 @@ const displayMovements = function (acc, sort = false) {
 const calcBalance = function (acc) {
   const balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
   acc.balance = balance;
-  labelBalance.textContent = `${balance.toFixed(2)}€`;
+  const formatedBalance = formatedCur(acc.balance, acc.locale, acc.currency);
+  labelBalance.textContent = `${formatedBalance}`;
 };
 
 const displaySummry = function (account) {
@@ -170,19 +180,27 @@ const displaySummry = function (account) {
   const incomeing = movement
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  incomes.textContent = ` ${incomeing.toFixed(2)}€`;
+
+  const formatedIn = formatedCur(incomeing, account.locale, account.currency);
+  incomes.textContent = ` ${formatedIn}`;
 
   const out = movement
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  outs.textContent = ` ${Math.abs(out).toFixed(2)}€`;
+  const formatedOut = formatedCur(out, account.locale, account.currency);
+  outs.textContent = ` ${formatedOut}`;
 
   const interest = movement
     .filter(mov => mov > 0)
     .map(deposit => (deposit * account.interestRate) / 100)
     .filter(int => int >= 1)
     .reduce((acc, int) => acc + int, 0);
-  interests.textContent = `${interest.toFixed(2)}€`;
+  const formatedInterest = formatedCur(
+    interest,
+    account.locale,
+    account.currency
+  );
+  interests.textContent = `${formatedInterest}`;
 };
 
 // Compute UserName
