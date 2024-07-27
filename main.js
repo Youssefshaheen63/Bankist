@@ -8,14 +8,14 @@ const account1 = {
   pin: 1111,
 
   movementsDates: [
-    '2019-11-18T21:31:17.178Z',
-    '2019-12-23T07:42:02.383Z',
-    '2020-01-28T09:15:04.904Z',
-    '2020-04-01T10:17:24.185Z',
-    '2020-05-08T14:11:59.604Z',
-    '2020-05-27T17:01:17.194Z',
-    '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2023-11-18T21:31:17.178Z',
+    '2023-12-23T07:42:02.383Z',
+    '2024-01-28T09:15:04.904Z',
+    '2024-04-01T10:17:24.185Z',
+    '2024-05-08T14:11:59.604Z',
+    '2024-07-11T17:01:17.194Z',
+    '2024-07-15T23:36:17.929Z',
+    '2024-07-25T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -28,14 +28,14 @@ const account2 = {
   pin: 2222,
 
   movementsDates: [
-    '2019-11-01T13:15:33.035Z',
-    '2019-11-30T09:48:16.867Z',
-    '2019-12-25T06:04:23.907Z',
-    '2020-01-25T14:18:46.235Z',
-    '2020-02-05T16:33:06.386Z',
-    '2020-04-10T14:43:26.374Z',
-    '2020-06-25T18:49:59.371Z',
-    '2020-07-26T12:01:20.894Z',
+    '2023-11-01T13:15:33.035Z',
+    '2023-11-30T09:48:16.867Z',
+    '2023-12-25T06:04:23.907Z',
+    '2024-01-25T14:18:46.235Z',
+    '2024-02-05T16:33:06.386Z',
+    '2024-04-10T14:43:26.374Z',
+    '2024-06-25T18:49:59.371Z',
+    '2024-07-26T12:01:20.894Z',
   ],
   currency: 'USD',
   locale: 'en-US',
@@ -48,14 +48,14 @@ const account3 = {
   pin: 3333,
 
   movementsDates: [
-    '2019-12-01T13:15:33.035Z',
-    '2019-12-25T09:48:16.867Z',
-    '2020-01-01T06:04:23.907Z',
-    '2020-01-15T14:18:46.235Z',
-    '2020-02-05T16:33:06.386Z',
-    '2020-05-01T14:43:26.374Z',
-    '2020-06-05T18:49:59.371Z',
-    '2020-07-10T12:01:20.894Z',
+    '2023-12-01T13:15:33.035Z',
+    '2023-12-25T09:48:16.867Z',
+    '2024-01-01T06:04:23.907Z',
+    '2024-01-15T14:18:46.235Z',
+    '2024-02-05T16:33:06.386Z',
+    '2024-05-01T14:43:26.374Z',
+    '2024-06-05T18:49:59.371Z',
+    '2024-07-10T12:01:20.894Z',
   ],
   currency: 'USD',
   locale: 'en-US',
@@ -68,11 +68,11 @@ const account4 = {
   pin: 4444,
 
   movementsDates: [
-    '2019-11-18T21:31:17.178Z',
-    '2019-12-23T07:42:02.383Z',
-    '2020-01-28T09:15:04.904Z',
-    '2020-04-01T10:17:24.185Z',
-    '2020-05-08T14:11:59.604Z',
+    '2023-11-22T21:31:17.178Z',
+    '2023-12-23T07:42:02.383Z',
+    '2024-07-02T09:15:04.904Z',
+    '2024-07-26T10:17:24.185Z',
+    '2024-07-27T14:11:59.604Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -106,6 +106,35 @@ const closeUser = document.querySelector('.close-user');
 const pinUser = document.querySelector('.close-pin');
 const loanAmount = document.querySelector('.loan--amount');
 
+const options = {
+  hour: 'numeric',
+  minute: 'numeric',
+  day: 'numeric',
+  month: 'numeric',
+  year: 'numeric',
+};
+
+// Calc Date
+const formatDays = function (date, locale) {
+  const calcDaysPassed = (date1, date2) =>
+    Math.round(Math.abs(date1 - date2) / (1000 * 60 * 60 * 24));
+
+  const daysPassed = calcDaysPassed(new Date(), date);
+  // console.log(daysPassed);
+
+  const day = `${date.getDate()}`.padStart(2, 0);
+  const month = `${date.getMonth() + 1}`.padStart(2, 0);
+  const year = date.getFullYear();
+  if (daysPassed === 0) {
+    return `Today`;
+  } else if (daysPassed === 1) {
+    return `Yesterday`;
+  } else if (daysPassed <= 7) {
+    return `${daysPassed} days ago`;
+  } else {
+    return new Intl.DateTimeFormat(locale, options).format(date);
+  }
+};
 // Display Movements
 const displayMovements = function (acc, sort = false) {
   movementsContainer.innerHTML = '';
@@ -114,10 +143,7 @@ const displayMovements = function (acc, sort = false) {
     : acc.movements;
   movs.forEach(function (mov, i) {
     const date = new Date(acc.movementsDates[i]);
-    const day = `${date.getDate()}`.padStart(2, 0);
-    const month = `${date.getMonth() + 1}`.padStart(2, 0);
-    const year = date.getFullYear();
-    const displayDate = `${day}-${month}-${year}`;
+    const displayDate = formatDays(date, acc.locale);
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `<div class="movement--row ">
                     <div class="movement-type ${type}">${i + 1} ${type}</div>
@@ -199,15 +225,21 @@ loginBtn.addEventListener('click', function (e) {
 
     // Current Date
     // Adding Dates
-    const now = new Date();
-    const day = `${now.getDate()}`.padStart(2, 0);
-    const month = `${now.getMonth() + 1}`.padStart(2, 0);
-    const year = now.getFullYear();
-    const hour = `${now.getHours()}`.padStart(2, 0);
-    const min = `${now.getMinutes()}`.padStart(2, 0);
+    // const now = new Date();
+    // const day = `${now.getDate()}`.padStart(2, 0);
+    // const month = `${now.getMonth() + 1}`.padStart(2, 0);
+    // const year = now.getFullYear();
+    // const hour = `${now.getHours()}`.padStart(2, 0);
+    // const min = `${now.getMinutes()}`.padStart(2, 0);
 
-    labelDate.textContent = `${day}-${month}-${year}`;
-    labelTime.textContent = `${hour}:${min}`;
+    // labelDate.textContent = `${day}-${month}-${year}`;
+    // labelTime.textContent = `${hour}:${min}`;
+
+    const locale = currentUser.locale;
+    const now = new Date();
+
+    const date = new Intl.DateTimeFormat(locale, options).format(now);
+    labelDate.textContent = date;
 
     // Clear input Fields
     loginUser.value = loginPin.value = '';
@@ -285,4 +317,5 @@ sortBtn.addEventListener('click', function (e) {
   sort = sort ? false : true;
   displayMovements(currentUser, sort);
 });
+
 
